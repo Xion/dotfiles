@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+"""
+Installation script for dotfiles
+"""
+import os
+import json
+from fnmatch import fnmatch
+
+
+DOTFILES_DIR = os.path.dirname(__file__)
+LIST_FILE = os.path.join(DOTFILES_DIR, 'list.json')
+
+
+def install_dotfiles():
+    dotfiles = load_dotfiles_list()
+
+    for dirname, _, files in os.walk(DOTFILES_DIR):
+        for filename in files:
+            if not is_dotfile(filename):
+                continue
+
+            filepath = os.path.join(dirname, filename)
+            install_dotfile(filepath,
+                            config=find_dotfile_in_list(dotfiles, filepath))
+
+
+def install_dotfile(filepath, config=None):
+    config = config or {}
+
+    # figure out paths for creating (sym)link from $HOME to dotfiles
+    src_dotfile = os.path.abspath(
+        os.path.join(DOTFILES_DIR, filepath)
+    )
+    dest_dotfile = os.path.abspath(
+        os.path.expanduser(os.path.join('~', filepath))
+    )
+
+    # (re)create the link
+    if os.path.exists(dest_dotfile):
+        os.unlink(dest_dotfile)
+    link_func = os.link if config.get('hard') else os.symlink
+    link_func(src_dotfile, dest_dotfile)
+
+
+# Utility functions
+
+def is_dotfile(filename):
+    # TODO: use .gitignore to determine which dotfiles are interesting
+    return all([
+        filename.startswith('.'),
+        not filename.startswith('.git'),  # exclude VCS files
+        not filename.endswith('~'),  # exclude backup/temp files
+    ])
+
+
+def load_dotfiles_list():
+    try:
+        with open(LIST_FILE) as f:
+            filelist = json.load(f)
+    except (IOError, ValueError):
+        return {}
+
+    return dict((normalize_path(path), data)
+                for path, data in filelist.iteritems())
+
+
+def find_dotfile_in_list(dotfiles, path):
+    path = normalize_path(path)
+
+    for key, value in dotfiles.iteritems():
+        if fnmatch(key, path):
+            return value
+
+
+def normalize_path(path):
+    return os.path.normpath(os.path.join('.', path))
+
+
+if __name__ == '__main__':
+    install_dotfiles()
