@@ -1,5 +1,5 @@
 {
     ".config/sublime-text-2/*": {
-        "hard": true
+        "hardlink": true
     }
 }
