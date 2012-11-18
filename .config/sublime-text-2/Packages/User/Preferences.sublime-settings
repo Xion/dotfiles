@@ -1,0 +1,46 @@
+{
+	"auto_complete_commit_on_tab": true,
+	"auto_complete_delay": 150,
+	"detect_slow_plugins": false,
+	
+	"color_scheme": "Packages/Color Scheme - Default/Twilight.tmTheme",
+	"theme": "Soda Light.sublime-theme",
+	"soda_classic_tabs": true,
+	"caret_style": "phase",
+	"highlight_line": true,
+
+	"detect_indentation": false,
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true,
+
+	"save_on_focus_lost": false,
+	"ensure_newline_at_eof_on_save": true,
+	"trim_trailing_whitespace_on_save": true,
+
+	"file_exclude_patterns":
+	[
+		"*.pyc",
+		".coverage",
+		".noseids",
+		".project",
+		".pydevproject"
+	],
+	"folder_exclude_patterns":
+	[
+		".svn",
+		".git",
+		".hg",
+		"CVS",
+		"build",
+		"*.egg-info",
+		".ropeproject",
+		".settings"
+	],
+
+	"font_face": "DejaVu Sans Mono",
+	"font_size": 9.1,
+	"ignored_packages":
+	[
+		"Vintage"
+	]
+}
