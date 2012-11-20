@@ -12,6 +12,13 @@ LIST_FILE = os.path.join(DOTFILES_DIR, 'list.json')
 
 
 def install_dotfiles():
+    """Installs the dotfiles by replacing existing ones with (sym)links
+    to dotfiles contained within this repository.
+
+    The ``LIST_FILE`` is consulted for any additional options about
+    how a particular dotfile has to be handled, i.e. whether it should be
+    hardlinked instead of symlinked.
+    """
     dotfiles = load_dotfiles_list()
 
     count = 0
@@ -29,6 +36,10 @@ def install_dotfiles():
 
 
 def install_dotfile(filepath, config=None):
+    """Installs a single dotfile, optionally using the ``config`` for this file
+    read from the ``LIST_FILE``.
+    :param config: Dictionary of config options
+    """
     config = config or {}
 
     # figure out paths for creating (sym)link from $HOME to dotfiles
@@ -49,6 +60,10 @@ def install_dotfile(filepath, config=None):
 # Utility functions
 
 def is_dotfile(filepath):
+    """Checks if given file in the dotfile repo is indeed an interesting dotfile.
+    This very script, for example, is obviously excluded from the category,
+    among other files.
+    """
     filepath = os.path.relpath(filepath, start=DOTFILES_DIR)
     filepath = os.path.normpath(filepath)
 
@@ -61,6 +76,7 @@ def is_dotfile(filepath):
 
 
 def load_dotfiles_list():
+    """Loads the dotfiles configuration options from ``LIST_FILE``."""
     try:
         with open(LIST_FILE) as f:
             filelist = json.load(f)
@@ -72,6 +88,7 @@ def load_dotfiles_list():
 
 
 def find_dotfile_in_list(dotfiles, path):
+    """Finds a configuration options for given dotfile in config list."""
     path = normalize_path(path)
 
     for key, value in dotfiles.iteritems():
@@ -80,6 +97,12 @@ def find_dotfile_in_list(dotfiles, path):
 
 
 def normalize_path(path):
+    """Unifies given path.
+
+    Letting all paths through this function eliminates some artificial equivalence
+    classes between paths, e.g. the ones that only differ by presence of absence
+    of initial "./".
+    """
     return os.path.normpath(os.path.join('.', path))
 
 
